@@ -1,5 +1,5 @@
 {
-  "name": "sih2022",
+  "name": "kethisahaayaak",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,6 +9,7 @@
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.26.0",
+    "cors": "^2.8.5",
     "date-fns": "^2.28.0",
     "eslint": "^8.10.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",

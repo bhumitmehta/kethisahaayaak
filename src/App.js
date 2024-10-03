@@ -1,7 +1,7 @@
 import "./App.css";
 import Home from "./pages/Home";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfile } from "./api/profileAPI";
 import {
@@ -9,19 +9,17 @@ import {
   getSaveProfileAction,
   getSaveTokenAction
 } from "./redux/actions";
-// import ProtectedRoute from "./components/ProtectedRoute";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import SupportAdmin from "./components/ChatSupport/SupportAdmin/index";
 import SupportEngine from "./components/ChatSupport/SupportEngine/index";
 import Cookies from "js-cookie";
 
-//Pages
+// Pages
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Help from "./pages/Help";
 import Header from "./components/header/Header";
 import FAQ from "./pages/FAQ";
-import PreHeader from "./components/preheader/PreHeader";
 import Footer from "./components/footer/Footer";
 import Dashboard from "./pages/dashboard/Dashboard";
 import AddProduct from "./pages/addProduct/AddProduct";
@@ -46,6 +44,7 @@ function App() {
   const tokenState = useSelector((state) => state.tokenReducer);
   const dispatch = useDispatch();
 
+  // Fetch and set token from cookies
   useEffect(() => {
     const access = Cookies.get("access-token");
     const refresh = Cookies.get("refresh-token");
@@ -55,29 +54,29 @@ function App() {
         refreshToken: refresh
       })
     );
-  }, [tokenState.token.accessToken]);
+  }, [dispatch]); // Removed tokenState from dependencies to avoid unnecessary re-renders
 
-  useEffect(async () => {
-    const access = Cookies.get("access-token");
-    if (access) {
-      const uuid = Cookies.get("uuid");
-      dispatch(getLoginAction());
-      const data = await getProfile({
-        uuid: uuid,
-        accessToken: access
-      });
-      console.log(data);
-      dispatch(getSaveProfileAction(data));
-    }
-  }, []);
+  // Fetch and set user profile based on access token
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const access = Cookies.get("access-token");
+      if (access) {
+        const uuid = Cookies.get("uuid");
+        dispatch(getLoginAction());
+        const data = await getProfile({
+          uuid: uuid,
+          accessToken: access
+        });
+        console.log(data);
+        dispatch(getSaveProfileAction(data));
+      }
+    };
+
+    fetchUserProfile();
+  }, [dispatch]); // Added dispatch as a dependency
 
   return (
     <>
-      {/*       
-      <p id="transcript">Transcript: {transcript}</p>
-
-      <button onClick={SpeechRecognition.startListening}>Start</button> */}
-      <PreHeader />
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -85,12 +84,12 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="verify-otp" element={<VerifyOTP />} />
         <Route path="help" element={<Help />} />
-        <Route path="Dashboard" element={<Dashboard />} />
-        <Route path="addProduct" element={<AddProduct />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="add-product" element={<AddProduct />} />
         <Route path="update-profile" element={<UpdateProfile />} />
         <Route path="product/:id" element={<Product />} />
         <Route path="contact" element={<ContactUs />} />
-        <Route path="bookingRequest/:id" element={<BookingRequest />} />
+        <Route path="booking-request/:id" element={<BookingRequest />} />
         <Route path="chat" element={<Chat />} />
         <Route path="booking-history" element={<BookingHistory />} />
         <Route path="faq" element={<FAQ />} />
@@ -101,7 +100,6 @@ function App() {
         <Route path="feedback" element={<Feedback />} />
         <Route path="*" element={<div>Not Found</div>} />
       </Routes>
-
       <Footer />
       <SupportEngine />
     </>

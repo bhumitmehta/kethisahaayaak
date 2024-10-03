@@ -45,8 +45,11 @@ const Login = ({ onClick }) => {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log("login")
       const data2 = await postLoginDataEmail({ email, password });
-      if (data2.success) {
+      console.log(data2)
+      if (data2) {
+       
         setLoading(false);
         setSuccess(true);
         setMessage(data2.message);
@@ -98,188 +101,201 @@ const Login = ({ onClick }) => {
       console.log(data);
     } catch (err) {}
   }
+
+
   async function saveData(data) {
     setSuccess(data.success);
     setMessage(data.message);
     localStorage.setItem("isLoggedIn", true);
-    Cookies.set("access-token", data.data.tokens.access, {
+  
+    // Ensure tokens are defined before setting cookies
+    if (data && data.token) {
+      Cookies.set("access-token", data.token, {
+        path: "/",
+        expires: new Date().setDate(new Date().getDate() + 1)
+      });
+      Cookies.set("refresh-token", data.token, {
+        path: "/",
+        expires: new Date().setDate(new Date().getDate() + 1)
+      });
+    } else {
+      console.error("Tokens not found in response data.");
+      setMessage("Login failed: Tokens missing from response.");
+      return;
+    }
+  
+    Cookies.set("uuid", data.uid, {
       path: "/",
       expires: new Date().setDate(new Date().getDate() + 1)
     });
-    Cookies.set("refresh-token", data.data.tokens.refresh, {
-      path: "/",
-      expires: new Date().setDate(new Date().getDate() + 1)
-    });
-    console.log(data);
-    Cookies.set("uuid", data.data.uuid, {
-      path: "/",
-      expires: new Date().setDate(new Date().getDate() + 1)
-    });
-    Cookies.set("user", data);
+    Cookies.set("user",JSON.stringify(data));
     console.log(Cookies.get("user"));
+  
     dispatch(getLoginAction());
     dispatch(
       getSaveTokenAction({
-        accessToken: data.data.tokens.access,
-        refreshToken: data.data.tokens.refresh
+        accessToken: data.token,
+        refreshToken: data.token
       })
     );
     dispatch(getSaveProfileAction(data));
     setLoading(false);
     navigate("/");
   }
+  
+  const commonButtonStyles = {
+    padding: "12px 24px",
+    borderRadius: "8px",
+    color: "#fff",
+    fontSize: "16px",
+    fontWeight: "600",
+    backgroundColor: "#219653",
+    cursor: "pointer",
+    transition: "opacity 0.3s ease",
+  };
+
+  const inputStyles = {
+    padding: "10px 30px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    marginBottom: "16px",
+    fontSize: "14px",
+  };
 
   return (
-    <div className="fixed top-0 z-50 w-full bg-[#219653]">
-      <div className="absolute top-2 right-2 ">
+    <div style={{ position: "fixed", top: 0,right:0, width: "100%", zIndex: 50, backgroundColor: "#219653", opacity:0.95}}>
+      <div style={{ position: "absolute", top: "10px", right: "100px" }}>
         <img
           src={cross_black}
-          className="cursor-pointer hover:opacity-90 bg-[#E5E5E5] rounded-full p-2 shadow-xl"
-          alt="crosss black"
+          alt="Close"
+          style={{
+            cursor: "pointer",
+            backgroundColor: "#E5E5E5",
+            borderRadius: "50%",
+            padding: "10px",
+            boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+            transition: "opacity 0.3s ease",
+          }}
           onClick={() => onClick(false)}
         />
       </div>
       {loading && <Loader />}
 
       {/* VERIFY OTP SCREEN */}
-
       <div
-        className={`transition ease-in-out z-40 ${
-          showOTP
-            ? "inline block opacity-100 -translate-x-0"
-            : "hidden opacity-0 -translate-x-full"
-        }`}
+        style={{
+          transition: "opacity 0.5s, transform 0.5s",
+          display: showOTP ? "block" : "none",
+          transform: showOTP ? "translateX(0)" : "translateX(-100%)",
+          opacity: showOTP ? 1 : 0,
+        }}
       >
-        <div className="bg-[#219653] h-screen flex justify-center align-center p-12">
-          <div className="rounded-2xl bg-white w-1/3 h-auto p-9 ">
-            <form onSubmit={verify} className="flex flex-col relative">
-              <div className="absolute -top-16 float-center flex flex-col left-1/2 -translate-x-1/2">
-                <img
-                  className="h-24 w-24 border-full mx-auto"
-                  style={{
-                    filter: "drop-shadow(0px 4px 4px rgba(104, 172, 93, 0.25))"
-                  }}
-                  src={logo}
-                  alt="logo"
-                />
+        <div style={{ backgroundColor: "#219653", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "20px"  }}>
+          <div style={{ backgroundColor: "#fff", borderRadius: "16px", padding: "20px", width: "400px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)" }}>
+            <form onSubmit={verify} style={{ display: "flex", flexDirection: "column", position: "relative" ,paddingTop:"10px"}}>
+              <div style={{ position: "absolute", top: "0px", left: "50%", transform: "translateX(-50%)" }}>
+                {/* <img src={logo} alt="logo" style={{  height: "96px", width: "96px", filter: "drop-shadow(0px 4px 4px rgba(104, 172, 93, 0.25))" }} /> */}
               </div>
-              <h1 className="mt-12 mb-5 text-center font-medium text-xl">
+              <h1 style={{ marginTop: "80px", marginBottom: "30px",marginTop:0, textAlign: "center", fontWeight: "500", fontSize: "18px" }}>
                 Enter the OTP sent to your Registered Number
               </h1>
-              <InputField
+              <input
                 placeholder="OTP"
                 value={OTP}
                 onChange={(e) => setOTP(e.target.value)}
                 type="text"
                 required={true}
+                style={inputStyles}
               />
-              <button
-                className="px-6 py-1 mx-auto rounded-lg text-white text-lg font-semibold bg-[#219653] hover:opacity-90"
-                type="submit"
-              >
+              <button style={{ ...commonButtonStyles, margin: "0 auto", display: "block", width: "150px" }} type="submit">
                 Verify OTP
               </button>
-              {success2 && (
-                <p className="text-center text-green-400">
-                  OTP verified successfully!
-                </p>
-              )}
-              {error && (
-                <p className="text-center text-red-400">
-                  Wrong OTP, plase try again!
-                </p>
-              )}
+              {success2 && <p style={{ textAlign: "center", color: "green" }}>OTP verified successfully!</p>}
+              {error && <p style={{ textAlign: "center", color: "red" }}>Wrong OTP, please try again!</p>}
             </form>
-            <p className="my-5 text-center">
-              Didn't recieve OTP?{" "}
-              <p className="text-blue-600 underline">Resend</p>
+            <p style={{ textAlign: "center", marginTop: "20px" }}>
+              Didn't receive OTP? <span style={{ color: "#1e90ff", textDecoration: "underline", cursor: "pointer" }}>Resend</span>
             </p>
           </div>
         </div>
       </div>
 
       {/* LOGIN DETAIL SCREEN */}
-
-      <div
-        className={`${loading && "blur-sm"} ${
-          showOTP ? "hidden opacity-0" : "inline-block opacity-100"
-        } transition ease-in-out flex flex-col`}
-      >
-        <div className="flex justify-center py-9 rounded-2xl">
-          <div
-            className="px-9 relative w-2/3 bg-[#219653]"
-            style={{
-              paddingTop: "5rem",
-              paddingBottom: "5rem"
-            }}
-          >
+      <div style={{ filter: loading ? "blur(4px)" : "none", display: showOTP ? "none" : "block" }}>
+        <div style={{ display: "flex", justifyContent: "center", padding: "50px 0" }}>
+          <div style={{ backgroundColor: "#219653", borderRadius: "16px", padding: "60px 20px", width: "60%" }}>
             <form
               onSubmit={Login}
-              className="bg-white mx-auto relative p-9 pt-3 drop-shadow-md rounded-3xl flex flex-col justify-center text-center w-2/3"
+              style={{
+                backgroundColor: "#fff",
+                borderRadius: "24px",
+                padding: "40px",
+                width: "70%",
+                margin: "0 auto",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                textAlign: "center",
+              }}
             >
-              <div className="absolute -top-12 float-center flex flex-col left-1/2 -translate-x-1/2">
-                <img
-                  className="h-24 w-24 border-full mx-auto"
-                  style={{
-                    filter: "drop-shadow(0px 4px 4px rgba(104, 172, 93, 0.25))"
-                  }}
-                  src={logo}
-                  alt="logo"
-                />
-              </div>
-              <h1 className="text-2xl font-bold" style={{ marginTop: "3rem" }}>
-                Login Here
-              </h1>
-              {success && <SuccessMsg msg={message} />}
-              {error && <ErrorMsg msg={message} />}
-              <p className="font mb-4">Login Using Email</p>
-              <InputField
+                          <div style={{ position: "absolute", top: "40px", left: "50%", transform: "translateX(-50%)" }}>
+              <img 
+                src={logo} 
+                alt="logo" 
+                style={{ height: "96px", width: "96px", filter: "drop-shadow(0px 4px 4px rgba(104, 172, 93, 0.25))" }} 
+              />
+            </div>
+
+              <h1 style={{ marginTop: "60px", fontWeight: "700", fontSize: "24px" }}>Login Here</h1>
+              {success && <p style={{ color: "green" }}>{message}</p>}
+              {error && <p style={{ color: "red" }}>{message}</p>}
+              <p style={{ marginBottom: "20px", fontSize: "16px" }}>Login Using Email</p>
+              <span><input
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="text"
-              />
-              <InputField
+                style={inputStyles}
+              /></span>
+             <div> <input
                 placeholder="Password*"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
-              />
-              <button
-                className="px-6 py-1 w-32 mx-auto rounded-lg text-white text-xl font-semibold bg-[#219653] hover:opacity-90"
-                type="submit"
-              >
+                style={inputStyles}
+              /></div>
+              <button style={commonButtonStyles} type="submit">
                 Login
               </button>
-              <div
-                className="flex flex-col my-7 relative"
-                style={{ borderTop: "1px solid #4F4F4F" }}
-              >
+              <div style={{ position: "relative", marginTop: "30px", marginBottom: "20px", borderTop: "1px solid #4F4F4F", paddingTop: "20px" }}>
                 <h1
-                  className="rounded-full bg-white w-10 text-center p-2 absolute left-1/2 -top-6 -translate-x-1/2"
-                  style={{ boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)" }}
+                  style={{
+                    position: "absolute",
+                    top: "-20px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    backgroundColor: "#fff",
+                    padding: "5px 15px",
+                    borderRadius: "50%",
+                    boxShadow: "0 4px 4px rgba(0,0,0,0.25)",
+                  }}
                 >
                   OR
                 </h1>
               </div>
-              <p className="mb-3">Login Using Mobile No.</p>
-              <InputField
+              <p style={{ marginBottom: "20px", fontSize: "16px" }}>Login Using Mobile No.</p>
+              <input
                 placeholder="Mobile No."
                 value={phone_number}
-                onChange={(e) => {
-                  setPhoneNumber(e.target.value);
-                }}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 type="text"
+                style={inputStyles}
               />
               <button
-                className="px-6 py-1 mx-auto rounded-lg text-white text-xl font-semibold bg-[#219653] hover:opacity-90"
+                style={{ ...commonButtonStyles, margin: "20px 0" }}
                 onClick={() => handleLoginPhone()}
               >
                 Login with OTP
               </button>
-              <p className="my-3">
-                An OTP will be sent to your mobile number for verification.
-              </p>
+              <p style={{ marginTop: "10px", fontSize: "14px" }}>An OTP will be sent to your mobile number for verification.</p>
             </form>
           </div>
         </div>
@@ -287,5 +303,4 @@ const Login = ({ onClick }) => {
     </div>
   );
 };
-
 export default Login;

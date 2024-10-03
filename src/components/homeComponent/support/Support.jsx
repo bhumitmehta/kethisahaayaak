@@ -6,40 +6,26 @@ import vector33 from "../../../img/vector33.svg";
 
 const Support = () => {
   return (
-    <div className="h-2/5 p-12">
-      <h1 className="text-2xl font-semibold uppercase text-center">
-        What we offer
-      </h1>
-      <p className="text-lg text-center mb-[100px] mt-3 opacity-90">
-        Being a part of Krishi Sadhan, this is what you get from us:
+    <div className="support-container">
+      <h1 className="support-title">What we offer</h1>
+      <p className="support-description">
+        Being a part of Krishi Sahaayaak, this is what you get from us:
       </p>
-      <div className="flex justify-center mediaQuery items-center mb-[100px]">
-        <div className="supportItem mx-5 getMargin p-9 rounded-2xl">
-          <img className="supportImg" src={vector11} alt="" />
-          <h3 className="text-xl mb-1 text-center font-semibold mt-5">
-            24*7 customer support
-          </h3>
-          <p className="text-md text-center font-normal">
-            We’re just one call away.
-          </p>
+      <div className="support-items">
+        <div className="support-item">
+          <img className="support-img" src={vector11} alt="Crop Recommendation" />
+          <h3>Crop Recommendation</h3>
+          <p>Know which crop to grow to avoid overproduction.</p>
         </div>
-        <div className="supportItem mx-5 getMargin p-9 rounded-2xl">
-          <img className="supportImg" src={vector22} alt="" />
-          <h3 className="text-xl mb-1 text-center font-semibold mt-5">
-            Trusted Sellers/Buyers
-          </h3>
-          <p className="text-md text-center font-normal">
-            Ensured safety of your experience.
-          </p>
+        <div className="support-item">
+          <img className="support-img" src={vector22} alt="Trusted Sellers/Buyers" />
+          <h3>Trusted Sellers/Buyers</h3>
+          <p>Ensured safety of your experience.</p>
         </div>
-        <div className="supportItem mx-5 getMargin p-9 rounded-2xl">
-          <img className="supportImg" src={vector33} alt="" />
-          <h3 className="text-xl mb-1 text-center font-semibold mt-5">
-            One-click Booking
-          </h3>
-          <p className="text-md text-center font-normal">
-            Time saving bookings.
-          </p>
+        <div className="support-item">
+          <img className="support-img" src={vector33} alt="Farming Methods" />
+          <h3>Know the New Ways of Farming</h3>
+          <p>Get solutions to your problem with our Kethi Vedica.</p>
         </div>
       </div>
     </div>

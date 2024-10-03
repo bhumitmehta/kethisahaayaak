@@ -1,113 +1,107 @@
-import React, { useState } from "react";
-import "./Header.css";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../img/logo.png";
 import { useSelector, useDispatch } from "react-redux";
-import { getLogoutAction } from "../../redux/actions";
 import Cookies from "js-cookie";
+import { getLogoutAction } from "../../redux/actions";
 
+import logo from "../../img/logo.png";
+import userIcon from "../../img/user_icon.svg";
 import Login from "../../pages/Login";
 import Register from "../../pages/Register";
 
-//images
-import userIcon from "../../img/user_icon.svg";
+import "./Header.css";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const tokenState = useSelector((state) => state.tokenReducer);
   const authState = useSelector((state) => state.authReducer);
-
   const [show, setShow] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
+  useEffect(() => {
+    const addGoogleTranslateScript = () => {
+      const script = document.createElement("script");
+      script.src =
+        "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
+    };
+
+    window.googleTranslateElementInit = () => {
+      new window.google.translate.TranslateElement(
+        { pageLanguage: "en" },
+        "google_element"
+      );
+
+      setTimeout(() => {
+        const iframe = document.querySelector('iframe.goog-te-banner-frame');
+        if (iframe) {
+          const iframeBody = iframe.contentWindow.document.body;
+
+          const style = document.createElement("style");
+          style.innerHTML = `
+            .goog-te-gadget select {
+              background-color: #219653 !important;
+             
+              border-radius: 12px !important;
+            }
+          `;
+          iframeBody.appendChild(style);
+        }
+      }, 500);
+    };
+
+    addGoogleTranslateScript();
+
+    return () => {
+      const googleTranslateScript = document.querySelector(
+        'script[src*="translate.google.com"]'
+      );
+      if (googleTranslateScript) {
+        googleTranslateScript.remove();
+      }
+    };
+  }, []);
+
   return (
-    <div className="h-16 inPhone">
-      <div className="flex content-center">
-        <div className="flex items-center cursor-pointer ml-auto lg:ml-32">
-          <img
-            onClick={() => navigate("/")}
-            src={logo}
-            className="logoWeb"
-            alt=""
-          />
-          <h3 className="text-md font-bold opacity-[.70]">
-            Krishi <br /> Sadhan
-          </h3>
-        </div>
-        <div className="flex-2 w-5/12 mx-auto">
-          <ul className="flex mt-4 items-around">
-            <li
-              onClick={() => navigate("/")}
-              className="text-lg cursor-pointer font-semibold text-[#219653] hover:opacity-90 lg:ml-7 ml-6 mr-1.5"
-            >
-              Home
-            </li>
-            <li
-              className="text-lg cursor-pointer font-semibold text-[#219653] hover:opacity-90 ml-6 mr-1.5"
-              onClick={() => navigate("/dashboard")}
-            >
-              Dashboard
-            </li>
-            <li
-              className="text-lg cursor-pointer font-semibold text-[#219653] hover:opacity-90 ml-6 mr-1.5"
-              onClick={() => navigate("/addProduct")}
-            >
-              Add Product
-            </li>
-            <li
-              onClick={() => navigate("/help")}
-              className="text-lg cursor-pointer font-semibold text-[#219653] hover:opacity-90 ml-6 mr-1.5"
-            >
-              Help
-            </li>
-          </ul>
-        </div>
+    <div className="header">
+      {/* Logo and Title */}
+      <div className="header-logo" onClick={() => navigate("/")}>
+        <img src={logo} alt="logo" />
+        <h3>Krishi Sahhaayaak</h3>
+      </div>
+
+      {/* Navigation Links */}
+      <nav className="navbar">
+        <ul>
+          <li onClick={() => navigate("/")}>Home</li>
+          <li onClick={() => navigate("/dashboard")}>Dashboard</li>
+          <li onClick={() => navigate("/addProduct")}>Add Product</li>
+          <li onClick={() => navigate("/help")}>Help</li>
+        </ul>
+      </nav>
+
+      {/* Auth Section */}
+      <div className="auth-buttons">
         {!Cookies.get("refresh-token") ? (
-          <div className="flex items-center">
-            <button
-              onClick={() => setShowLogin(true)}
-              className="hover:bg-[#219653] bg-white border-2 transition border-[#219653] text-[#219653] hover:text-white font-bold py-1 px-8 rounded mx-2"
-            >
-              Login
-            </button>
-            <button
-              onClick={() => setShowRegister(true)}
-              className="hover:bg-[#219653] bg-white border-2 transition border-[#219653] text-[#219653] hover:text-white font-bold py-1 px-8 rounded mx-4"
-            >
-              Sign Up
-            </button>
-          </div>
+          <>
+            <button onClick={() => setShowLogin(true)}>Login</button>
+            <button onClick={() => setShowRegister(true)}>Sign Up</button>
+          </>
         ) : (
           <div
-            onMouseOver={(prev) => setShow(true)}
-            onMouseLeave={(prev) => setShow(false)}
-            className="my-auto"
+            className="profile-section"
+            onMouseOver={() => setShow(true)}
+            onMouseLeave={() => setShow(false)}
           >
-            <div className="bg-gray-200 relative rounded-full py-1 px-4 my-auto text-gray-700 flex items-center z-40 hover:bg-gray-300 mr-5 cursor-pointer">
-              <img
-                className="rounded-full w-8 h-8 mr-3"
-                src={userIcon}
-                alt="profile_pic"
-              />
-              <p className="text-lg font-semibold">
-                {"Hi, " + authState.user.data.first_name}
-              </p>
-              {/* <p className="text-lg font-semibold">{"Hi, Gajendra"}</p> */}
+            <div className="profile-dropdown-trigger">
+              <img className="rounded-full w-8 h-8 mr-3" src={userIcon} alt="profile_pic" />
+              <p>{"Hi, " + authState.user.data.first_name}</p>
             </div>
             {show && (
-              <div
-                onMouseOver={() => setShow(true)}
-                onMouseLeave={() => setShow(false)}
-                className="absolute bg-white rounded-lg z-40 border-2 border-slate-400 p-1"
-              >
-                <p
-                  onClick={() => navigate("/update-profile")}
-                  className="px-5 text-gray-600 py-2 bg-white cursor-pointer border-solid border-b border-slate-400 hover:bg-gray-200"
-                >
-                  Profile
-                </p>
+              <div className="profile-dropdown">
+                <p onClick={() => navigate("/update-profile")}>Profile</p>
                 <p
                   onClick={() => {
                     Cookies.remove("access-token");
@@ -116,7 +110,6 @@ const Header = () => {
                     dispatch(getLogoutAction());
                     navigate("/login");
                   }}
-                  className="px-5 text-gray-600 py-2 bg-white cursor-pointer border-solid  border-slate-400 hover:bg-gray-200"
                 >
                   Logout
                 </p>
@@ -124,15 +117,15 @@ const Header = () => {
             )}
           </div>
         )}
-      </div>
-      {showLogin ? (
-        <div className="">
-          <Login onClick={setShowLogin} />
+        {/* Google Translate */}
+        <div className="ml-4">
+          <div id="google_element"></div>
         </div>
-      ) : (
-        <div></div>
-      )}
-      {showRegister ? <Register onClick={setShowRegister} /> : <div></div>}
+      </div>
+
+      {/* Modals for Login and Register */}
+      {showLogin && <Login onClick={setShowLogin} />}
+      {showRegister && <Register onClick={setShowRegister} />}
     </div>
   );
 };
