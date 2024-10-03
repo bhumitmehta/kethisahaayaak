@@ -80,14 +80,14 @@ const Banner = () => {
           <div>
             <div className="flex flex-col justify-center -mt-10 wrapper">
               <p className="text-2xl font-normal text-white">
-                Namaste, welcome to Krishi Sadhan.
+                Welcome to kehtisahayaak
               </p>
               <h1 className="text-4xl font-bold text-white">
                 <span className="text-[#219653]">Farmer’s Eqipments</span> at
                 reasonable <br /> and affordable prices.
               </h1>
               <p className="text-lg font-normal mt-2 mb-4 text-white">
-                Start now with just one click.
+                Get Crop Reccomadation 
               </p>
               <div className="flex justify-center items-center mx-auto">
                 <button

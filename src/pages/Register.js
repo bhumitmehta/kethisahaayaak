@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate, createSearchParams } from "react-router-dom";
-// import { useDispatch } from "react-redux";
-
 //Components
 import InputField from "../components/input/InputField";
 import { ErrorMsg } from "../components/alerts";
@@ -154,12 +152,22 @@ const Register = ({ onClick }) => {
               required={true}
             />
             <InputField
-              placeholder="Phone Number*"
-              value={phone_number}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              type="text"
-              required={true}
-            />
+            placeholder="Phone Number*"
+            value={phone_number}
+            onChange={(e) => {
+              let inputNumber = e.target.value;
+
+              // Check if phone number starts with +91
+              if (!inputNumber.startsWith("+91")) {
+                inputNumber = "+91" + inputNumber;
+              }
+
+              setPhoneNumber(inputNumber);
+            }}
+            type="text"
+            required={true}
+          />
+
             <button
               className="px-6 py-1 w-32 mx-auto rounded-lg text-white text-xl font-semibold bg-[#219653] hover:opacity-90"
               type="submit"

@@ -2,7 +2,7 @@
 import instance from "./config";
 // import Cookies from "js-cookie";
 
-const url = "https://krishi-sadhan-app.herokuapp.com";
+const url = "https://localhost:4000";
 
 export const getProfile = async ({ uuid, accessToken }) => {
   const headers = {

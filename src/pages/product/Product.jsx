@@ -92,7 +92,7 @@ const Product = () => {
       ))
 
     const redirect = () => {
-        window.location.href = 'http://localhost:3001/login';
+        window.location.href = 'http://localhost:3000';
         return null;
     }
 

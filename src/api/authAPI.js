@@ -3,7 +3,7 @@ import instance from "./config";
 import Cookies from "js-cookie";
 
 //const url = "https://krishi-sadhan-app.herokuapp.com";
-const url = "http://localhost:5000";
+const url = "http://localhost:8000";
 
 export const postRegisterData = async ({
   first_name,
@@ -30,8 +30,9 @@ export const postRegisterData = async ({
 
 export const postLoginDataEmail = async ({ email, password }) => {
   try {
+    
     console.log(email, password);
-    const res = await instance.post(`/users/login/email`, {
+    const res = await axios.post(`${url}/users/login/email`, {
       email,
       password
     });

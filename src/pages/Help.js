@@ -6,7 +6,7 @@ import ExpandDropdown from "../components/expandText";
 const Help = () => {
   const booking_help = [
     {
-      heading: "Q: How do I book an equipment on Krishi Sadhan",
+      heading: "Q: How do I book an equipment on Krishi Sahaayaak",
       content:
         "A: You can search and book any equipment available in your location.",
     },

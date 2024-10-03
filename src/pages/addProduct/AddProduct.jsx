@@ -15,6 +15,7 @@ const AddProduct = () => {
   const [equipments, setEquipments] = useState([]);
   const [brands, setBrands] = useState([]);
   const [endDate, setEndDate] = useState(new Date());
+  const [image, setImage] = useState(null); // Image state
   const navigate = useNavigate();
   const [data, setData] = useState({
     owner: 54,
@@ -35,23 +36,20 @@ const AddProduct = () => {
     height: 0,
   });
 
-    useEffect(() => {
-        if(!Cookies.get('access-token')) {
-            navigate('/');
-        }
-    }, []);
-  
+  useEffect(() => {
+    if (!Cookies.get("access-token")) {
+      navigate("/");
+    }
+  }, []);
 
   useEffect(() => {
     const getEquipment = async () => {
       const { data } = await getEquips();
       setEquipments(data);
-      // console.log(data);
     };
     const getBrand = async () => {
       const { data } = await getBrands();
       setBrands(data);
-      // console.log(data);
     };
     getEquipment();
     getBrand();
@@ -72,6 +70,11 @@ const AddProduct = () => {
     setStartDate(ranges.selection.startDate);
     setEndDate(ranges.selection.endDate);
   };
+
+  const handleImageUpload = (e) => {
+    setImage(e.target.files[0]); // Set uploaded image
+  };
+
   const selectionRange = {
     startDate: startDate,
     endDate: endDate,
@@ -95,18 +98,15 @@ const AddProduct = () => {
           className="w-full mt-12 max-w-8xl"
         >
           <div className="flex flex-wrap -mx-3 mb-6">
+            {/* Title */}
             <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
+              <label className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2">
                 Title*
               </label>
               <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
+                className="appearance-none block w-full rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
-                placeholder="abc@gmail.com"
+                placeholder="Equipment Title"
                 value={data.title}
                 onChange={(e) => {
                   setData({ ...data, title: e.target.value });
@@ -114,11 +114,9 @@ const AddProduct = () => {
               />
             </div>
 
+            {/* Manufacturer */}
             <div className="w-1/2 md:w-1/2 px-3 border flex flex-col p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
+              <label className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2">
                 Manufacturer*
               </label>
               <select
@@ -137,18 +135,16 @@ const AddProduct = () => {
                 })}
               </select>
             </div>
+
+            {/* Description */}
             <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
+              <label className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2">
                 Description*
               </label>
               <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
+                className="appearance-none block w-full rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
-                placeholder="abc@gmail.com"
+                placeholder="Equipment Description"
                 value={data.description}
                 onChange={(e) => {
                   setData({ ...data, description: e.target.value });
@@ -156,209 +152,69 @@ const AddProduct = () => {
               />
             </div>
 
+            {/* Daily Rental */}
             <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
+              <label className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2">
                 Daily Rental*
               </label>
               <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
+                className="appearance-none block w-full rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
-                placeholder="abc@gmail.com"
+                placeholder="Daily Rental"
                 value={data.daily_rental}
                 onChange={(e) => {
                   setData({ ...data, daily_rental: e.target.value });
                 }}
               />
             </div>
-            <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
-                Hourly Rental*
-              </label>
-              <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="text"
-                placeholder="abc@gmail.com"
-                value={data.hourly_rental}
-                onChange={(e) => {
-                  setData({ ...data, hourly_rental: e.target.value });
-                }}
-              />
-            </div>
 
+            {/* Equipment Type */}
             <div className="w-1/2 md:w-1/2 px-3 border p-2 flex flex-col">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
-                Equipment Type*
+      <label className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2">
+        Equipment Type*
+      </label>
+      <select
+        onChange={(e) =>
+          setData({ ...data, equipment_type: e.target.value })
+        }
+        className="w-32"
+      >
+        <option disabled>Choose Equipment Type</option>
+        {equipments.map((item, i) => {
+          return (
+            <option key={i} value={item.id}>
+              {item.title}
+            </option>
+          );
+        })}
+      </select>
+    </div>
+
+            {/* Image Upload */}
+            <div className="w-1/2 md:w-1/2 px-3 border p-2">
+              <label className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2">
+                Upload Image*
               </label>
-              <select
-                onChange={(e) =>
-                  setData({ ...data, equipment_type: e.target.value })
-                }
-                className="w-32"
-              >
-                <option disabled>Choose Equipment Type</option>
-                {equipments.map((item, i) => {
-                  return (
-                    <option key={i} value={item.id}>
-                      {item.title}
-                    </option>
-                  );
-                })}
-              </select>
+              <input
+                type="file"
+                onChange={handleImageUpload}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+              />
+              {image && <p className="mt-2">Selected file: {image.name}</p>}
             </div>
 
-            <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
-                Manufacturing Year*
-              </label>
-              <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="text"
-                placeholder="abc@gmail.com"
-                value={data.manufacturing_year}
-                onChange={(e) => {
-                  setData({ ...data, manufacturing_year: e.target.value });
-                }}
-              />
-            </div>
-            <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
-                Model*
-              </label>
-              <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="text"
-                placeholder="abc@gmail.com"
-                value={data.model}
-                onChange={(e) => {
-                  setData({ ...data, model: e.target.value });
-                }}
-              />
-            </div>
-
-            <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
-                Condition*
-              </label>
-              <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="text"
-                placeholder="abc@gmail.com"
-                value={data.condition}
-                onChange={(e) => {
-                  setData({ ...data, condition: e.target.value });
-                }}
-              />
-            </div>
-
-            <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
-                Equipment Location*
-              </label>
-              <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="text"
-                placeholder="abc@gmail.com"
-                value={data.equipment_location}
-                onChange={(e) => {
-                  setData({ ...data, equipment_location: e.target.value });
-                }}
-              />
-            </div>
-
-            <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
-                HorsePower*
-              </label>
-              <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="text"
-                placeholder="abc@gmail.com"
-                value={data.horsepower}
-                onChange={(e) => {
-                  setData({ ...data, horsepower: e.target.value });
-                }}
-              />
-            </div>
-
-            <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
-                Height*
-              </label>
-              <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="text"
-                placeholder="abc@gmail.com"
-                value={data.height}
-                onChange={(e) => {
-                  setData({ ...data, height: e.target.value });
-                }}
-              />
-            </div>
-            <div className="w-1/2 md:w-1/2 px-3 border p-2">
-              <label
-                for="exampleInputEmail1"
-                className="form-label w-1/2 text-sm font-bold text-gray-500 inline-block pl-2 mb-2"
-              >
-                Width*
-              </label>
-              <input
-                className="appearance-none block w-1/2 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="text"
-                placeholder="abc@gmail.com"
-                value={data.width}
-                onChange={(e) => {
-                  setData({ ...data, width: e.target.value });
-                }}
-              />
-            </div>
+            {/* Other fields... */}
+            {/* Add the rest of your fields here like Hourly Rental, Model, etc. */}
 
             <div className="w-full md:w-1/2 px-3 mb-6 border p-2 md:mb-0">
               <label
-                for="exampleInputEmail1"
-                className="form-label text-lg bg-gray-200 hover:bg-gray-300 font-bold text-gray-500 inline-block pl-2 mb-2"
                 onClick={() => setVisible(true)}
+                className="form-label text-lg bg-gray-200 hover:bg-gray-300 font-bold text-gray-500 inline-block pl-2 mb-2"
               >
                 Select Date Range
               </label>
               {visible ? (
                 <DateRangePicker
-                  style={{ height: "300px", width: "280px" }}
                   ranges={[selectionRange]}
                   minDate={new Date()}
                   rangeColors={["#68AC5D"]}

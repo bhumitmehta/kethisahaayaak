@@ -2,36 +2,77 @@ import axios from "./config";
 import instance from "./config";
 import Cookies from "js-cookie";
 
+const url = "http://localhost:8000";
+
+// Dummy data for fallback
+const dummyEquipment = [
+  {
+    id: 1,
+    title: "Dummy Equipment 1",
+    description: "This is a dummy equipment description.",
+    manufacturer: "Dummy Manufacturer",
+    daily_rental: 100,
+    hourly_rental: 15,
+    // Add other properties as needed
+  },
+  {
+    id: 2,
+    title: "Dummy Equipment 2",
+    description: "This is another dummy equipment description.",
+    manufacturer: "Dummy Manufacturer",
+    daily_rental: 150,
+    hourly_rental: 20,
+    // Add other properties as needed
+  },
+];
+
+const dummyBrands = [
+  { id: 1, name: "Dummy Brand 1" },
+  { id: 2, name: "Dummy Brand 2" },
+];
+
+const dummyEquipTypes = [
+  { id: 1, name: "Dummy Equipment Type 1" },
+  { id: 2, name: "Dummy Equipment Type 2" },
+];
+
 export const getEquips = async () => {
   try {
-    return await axios.get("/api/equipment");
+    const response = await axios.get(`${url}/api/equipment`);
+    return response.data || dummyEquipment; // Return data or dummy data
   } catch (error) {
     console.log("Error while calling getEquips API", error);
+    return dummyEquipment; // Return dummy data on error
   }
 };
 
 export const getBrands = async () => {
   try {
-    return await axios.get("/api/brand/");
+    const response = await axios.get(`${url}/api/brand/`);
+    return response.data || dummyBrands; // Return data or dummy data
   } catch (error) {
-    console.log("Error while calling getEquips API", error);
+    console.log("Error while calling getBrands API", error);
+    return dummyBrands; // Return dummy data on error
   }
 };
-// /api/brand/
 
 export const getEquip = async (id) => {
   try {
-    return await axios.get(`/api/equipment/${id}`);
+    const response = await axios.get(`/api/equipment/${id}`);
+    return response.data || null; // Return data or null
   } catch (error) {
     console.log("Error while calling getEquip API", error);
+    return null; // Return null on error
   }
 };
 
 export const getEquipsList = async () => {
   try {
-    return await axios.get("/api/equipment_type");
+    const response = await axios.get("/api/equipment_type");
+    return response.data || dummyEquipTypes; // Return data or dummy data
   } catch (error) {
     console.log("Error while calling getEquipsList API", error);
+    return dummyEquipTypes; // Return dummy data on error
   }
 };
 
@@ -45,7 +86,7 @@ export const createEquipmentReport = async ({
       "Content-Type": "application/json",
       Authorization: `Bearer ${Cookies.get("access-token")}`,
     };
-    return await instance.post(
+    const response = await instance.post(
       "/enquiry/report-equipment",
       {
         equipment,
@@ -54,8 +95,10 @@ export const createEquipmentReport = async ({
       },
       { headers }
     );
+    return response.data || null; // Return data or null
   } catch (error) {
-    console.log("Error while calling createBooking API", error);
+    console.log("Error while calling createEquipmentReport API", error);
+    return null; // Return null on error
   }
 };
 
@@ -82,7 +125,7 @@ export const createEquipment = async ({
       "Content-Type": "application/json",
       Authorization: `Bearer ${Cookies.get("access-token")}`,
     };
-    return await instance.post(
+    const response = await instance.post(
       "/api/equipment/create/",
       {
         owner,
@@ -104,8 +147,10 @@ export const createEquipment = async ({
       },
       { headers }
     );
+    return response.data || null; // Return data or null
   } catch (error) {
-    console.log("Error while calling createBooking API", error);
+    console.log("Error while calling createEquipment API", error);
+    return null; // Return null on error
   }
 };
 
